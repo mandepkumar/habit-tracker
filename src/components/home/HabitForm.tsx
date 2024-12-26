@@ -58,7 +58,7 @@ const HabitForm: React.FC = () => {
           onChange={(e) => setName(e.target.value)}
         />
       </div>
-      <Button className="w-full" type="submit">
+      <Button className="w-full" type="submit" disabled={!name || !frequency}>
         ADD HABIT
       </Button>
     </form>

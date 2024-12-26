@@ -1,3 +1,4 @@
+import { getTodayDate } from "@/utils";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type HabitFrequency = "daily" | "weekly";
@@ -22,7 +23,7 @@ const initialState: HabitState = {
   error: null,
 };
 
-export const fetchHabits = createAsyncThunk("habits/fetchHabits", async () => {
+export const fetchHabits = createAsyncThunk("habit/fetchHabits", async () => {
   await new Promise((res) => setTimeout(res, 1000));
   const habits: Habit[] = [
     {
@@ -61,6 +62,22 @@ const habitSlice = createSlice({
 
       state.habits.push(newHabit);
     },
+    updateHabitCompleteStatus: (
+      state,
+      action: PayloadAction<{ id: string }>
+    ) => {
+      const { id } = action.payload;
+      const today = getTodayDate();
+      state.habits.forEach((habit) => {
+        if (habit.id=== id) {
+          const lastCompletedDate = habit.completedDates.at(-1);
+          if (lastCompletedDate == today) {
+            habit.completedDates.pop();
+          } else habit.completedDates.push(today);
+          return habit;
+        }
+      });
+    },
     deleteHabit: (state, action: PayloadAction<{ id: string }>) => {
       state.habits = state.habits.filter(
         (habit) => habit.id != action.payload.id
@@ -83,5 +100,6 @@ const habitSlice = createSlice({
   },
 });
 
-export const { addHabit, deleteHabit } = habitSlice.actions;
+export const { addHabit, deleteHabit, updateHabitCompleteStatus } =
+  habitSlice.actions;
 export default habitSlice.reducer;
